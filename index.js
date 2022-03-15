@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
 const path = require('path')
 const cors = require('cors')
 const mongoose = require('mongoose')
@@ -13,7 +14,8 @@ mongoose.connect(process.env.DB_CONNECT, {
 }, () => console.log('connected to database'))
 
 app.use(cors({ origin: '*' }))
-app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.listen(3000, () => {
     console.log('listening on port 3000')
@@ -24,6 +26,17 @@ app.get('/:token', async (req, res) => {
     const sync = await Syncs.findOne({ token })
 
     res.send(sync)
+})
+
+app.delete('/:token', async (req, res) => {
+    const { token } = req.params
+    const { name } = req.body
+    const sync = await Syncs.findOne({ token })
+
+    sync.devices = sync.devices.filter(x => x.name !== name)
+
+    sync.save()
+    res.send('OK')
 })
 
 app.post('/:token', async (req, res) => {
