@@ -28,6 +28,18 @@ app.get('/:token', async (req, res) => {
     res.send(sync)
 })
 
+app.delete('/:token/:deviceName', async (req, res) => {
+    const { token, deviceName } = req.params
+    const { tabId } = req.body
+    const sync = await Syncs.findOne({ token })
+
+    const device = sync.devices.find(x => x.name === deviceName)
+    device.closedTabs.push(tabId)
+
+    await sync.save()
+    res.send('OK')
+})
+
 app.delete('/:token', async (req, res) => {
     const { token } = req.params
     const { name } = req.body

@@ -8,7 +8,8 @@ const syncSchema = new mongoose.Schema({
     devices: [
         {
             name: { type: String },
-            chromeSession: { type: Object }
+            chromeSession: { type: Object },
+            closedTabs: { type: [Number] }
         }
     ]
 })
