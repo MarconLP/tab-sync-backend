@@ -41,11 +41,11 @@ app.delete('/:token/:deviceName/closedTabs', async (req, res) => {
 
 app.delete('/:token/:deviceName', async (req, res) => {
     const { token, deviceName } = req.params
-    const { tabId } = req.body
+    const { tabIds } = req.body
     const sync = await Syncs.findOne({ token })
 
     const device = sync.devices.find(x => x.name === deviceName)
-    device.closedTabs.push(tabId)
+    device.closedTabs = [...device.closedTabs, ...tabIds]
 
     await sync.save()
     res.send('OK')
